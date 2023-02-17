@@ -3,21 +3,18 @@ package edu.escuelaing.arem.ASE.app;
 import java.net.*;
 import java.io.*;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
-import edu.escuelaing.arem.ASE.app.services.RestService;
-import edu.escuelaing.arem.ASE.app.spark.Request;
-import edu.escuelaing.arem.ASE.app.spark.Spark;
+import edu.escuelaing.arem.ASE.app.spark.StaticFiles;
 import org.json.*;
 
 public class HttpServer {
 
-    private static Map<String, RestService> services = new HashMap<>();
-
     private static  HttpServer _instance = new HttpServer();
 
     private OutputStream outputStream = null;
+
+    private StaticFiles staticFiles = StaticFiles.getIstance();
 
     public void run(String[] args) throws IOException {
 
@@ -45,6 +42,7 @@ public class HttpServer {
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader( new InputStreamReader( clientSocket.getInputStream()));
             String inputLine, outputLine, path = "/simple";
+            String method = "GET";
             Boolean boolFirstLine = true;
             outputStream = clientSocket.getOutputStream();
 
@@ -57,6 +55,7 @@ public class HttpServer {
                 }
                 if (boolFirstLine) {
                     path = inputLine.split(" ")[1];
+                    method = inputLine.split(" ")[0];
                     boolFirstLine = false;
                 }
                 if (!in.ready()) {
@@ -64,27 +63,16 @@ public class HttpServer {
                 }
             }
 
-            if (path.startsWith("/apps/")) {
-                outputLine = (path.substring(5));
-                if (Spark.gets.containsKey(outputLine)){
-                    if (Objects.equals(outputLine, "/imagen.jpg")) {
-                        Spark.gets.get(outputLine).setBody(Spark.getBodyImg(outputLine));
-                    }
-                    outputLine = Spark.gets.get(outputLine).getResponse();
+            if (Objects.equals(method, "GET")){
+                String ext = path.split("\\.")[1];
+                String header = staticFiles.getHeader("text/"+ext);
+                String body = staticFiles.readFile(path);
+                if (Objects.equals(body, "404")) {
+                    body = staticFiles.readFile("/notFound.html");
                 }
-            } else if (!urlTitle.equals("")) {
-                String response = HttpConnection.requestTitle(urlTitle);
-                outputLine ="HTTP/1.1 200 OK\r\n"
-                        + "Content-Type: text/html\r\n"
-                        + "\r\n"
-                        + "<br>"
-                        + "<table border=\" 1 \"> \n " + doTable(response)
-                        + "</table>";
-            }else {
-                outputLine = "HTTP/1.1 200 OK\r\n"
-                        + "Content-Type: text/html\r\n"
-                        + "\r\n"
-                        + htmlWithForms();
+                outputLine = header + body;
+            } else {
+                outputLine = htmlWithForms();
             }
 
             out.println(outputLine);
@@ -101,37 +89,6 @@ public class HttpServer {
      */
     public static HttpServer getInstance() {
         return _instance;
-    }
-
-    /**
-     * method that extracts the header and the body of the services
-     * @param serviceName Service name
-     * @return String service
-     */
-    public static String executeService(String serviceName) throws IOException {
-        String body, header;
-        if (services.containsKey(serviceName) ) {
-            RestService rs = services.get(serviceName);
-            header = rs.getHeader();
-            body = rs.getResponse();
-        } else {
-            RestService rs = services.get("/404");
-            header = rs.getHeader();
-            body = rs.getResponse();
-        }
-
-        return header + body;
-    }
-
-
-
-    /**
-     * method to add services
-     * @param key String key
-     * @param service String value
-     */
-    public void addService(String key, RestService service) {
-        services.put(key, service);
     }
 
     /**

@@ -18,15 +18,24 @@ public class Spark {
 
     public static Map<String, Response> gets = new HashMap<>();
 
-    public static void get(String path, Route route) throws IOException {
+    public static void get(String path, Route route) {
         Request req = new Request();
         Response res = new Response();
-        String s = route.application(req, res);
-        System.out.println("Path " + path);
-        res.setBody(getBody(path));
+        String var = route.application(req, res);
+        res.setBody(var);
         res.setPath(path);
         gets.put(path, res);
     }
+
+    public static void getFile(String path, Route route) {
+        Request req = new Request();
+        Response res = new Response();
+        String var = route.application(req, res);
+        res.setBody(var);
+        res.setPath(path);
+        gets.put(path, res);
+    }
+
 
     public static String getBody(String path) {
         byte[] file;
@@ -51,6 +60,5 @@ public class Spark {
         dataOutputStream.write(byteArrayOutputStream.toByteArray());
         return response;
     }
-
 
 }

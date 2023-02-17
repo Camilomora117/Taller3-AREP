@@ -16,8 +16,14 @@ public class Response {
                 "\r\n";
     }
 
-    public String getResponse() {
-        return getHeader() + getBody();
+    public String getBody() {
+        byte[] file;
+        try{
+            file = Files.readAllBytes(Paths.get("src/main/resources/" + path));
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
+        return new String(file);
     }
 
     public String getPath() {
@@ -36,11 +42,12 @@ public class Response {
         this.type = type;
     }
 
-    public String getBody() {
-        return body;
-    }
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public String getResponse() {
+        return getHeader() + getBody();
     }
 }
