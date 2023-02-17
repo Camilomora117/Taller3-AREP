@@ -1,6 +1,8 @@
 # AREP Laboratorio 2
 
-Servidor web que soporte múlltiples solicitudes seguidas (no concurrentes). El servidor puede leer los archivos del disco local y retornar todos los archivos solicitados, incluyendo páginas html, archivos java script, css e imágenes. 
+En este taller usted debe explorar la arquitectura del microframework WEB denominado sparkweb. Este micro framework permite construir aplicaciones web de manera simple usando funciones lambda.
+
+Esta app permite leer archivos estaticos css, html, js y jpg.
 
 ## Iniciando
 
@@ -15,7 +17,7 @@ Servidor web que soporte múlltiples solicitudes seguidas (no concurrentes). El 
 Descargamos el archivo .zip o lo clonamos con el comando:
 
 ```
-git clone https://github.com/Camilomora117/Taller2-AREP.git
+git clone https://github.com/Camilomora117/Taller3-AREP.git
 ```
 
 Una vez descargado el repositorio nos dirigimos al directorio raiz del proyecto y ejecutamos el comando:
@@ -28,28 +30,28 @@ Finalmente ingrese al navegador de su preferencia y usamos el link (El cual es e
 http://localhost:35000
 
 #Para usar los servicios
-Si desea usar los servicios necesita las siguientes rutas
+Si desea usar leer los archivos estaticos use los siguientes links
 
 ```
-http://localhost:35000/apps/index.html
-```
-
-```
-http://localhost:35000/apps/style.css
+http://localhost:35000/index.html
 ```
 
 ```
-http://localhost:35000/apps/imagen.jpg
+http://localhost:35000/style.css
 ```
 
 ```
-http://localhost:35000/apps/app.js
+http://localhost:35000/imagen.jpg
+```
+
+```
+http://localhost:35000/app.js
 ```
 
 Ademas una pagina web donde involucra todos los archivos:
 
 ```
-http://localhost:35000/apps/pagina.html
+http://localhost:35000/pagina.html
 ```
 
 ## Documentación
@@ -88,8 +90,8 @@ Versión 1.0
 
 ## Explicaciones
 
-* Extensibilidad: Para cambiar la API de la cual se obtiene la informacion de las peliculas, solo se debe modificar la url donde se optiene la información.
+* Extensibilidad: Podemos leer cualquier archivo que se encuentre en un directorio que nosotros establecimos.
 
-* Patrones: Hacemos uso del patron de diseño Fachada, puesto que la clase Cache recibe toda la consulta inicialmente y antes de preguntarle a la API revisa si ya se encuentra información guardada en el cache.
+* Patrones: Hacemos uso del patron singleton para crear una sola instancia del servidor y una sola instancia de StaticFiles.
 
 * Modular: En HttpServer tenemos el servidor el cual es el metodo main que inicia la conexión del socket en espera de solicitudes de información de peliculas, esta a su vez crea la tabla respectiva del JSON que contiene la información de la pelicula buscada. La clase Cache unicamente guarda la informacion de peliculas que ya se buscarón anteriormente para que no se busque de nuevo. Por ultimo HttpConnection realiza el enlace entre la API de peliculas y el socket creado por HttpServer.
