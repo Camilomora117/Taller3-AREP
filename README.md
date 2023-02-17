@@ -1,4 +1,4 @@
-# AREP Laboratorio 2
+# AREP Laboratorio 3
 
 En este taller usted debe explorar la arquitectura del microframework WEB denominado sparkweb. Este micro framework permite construir aplicaciones web de manera simple usando funciones lambda.
 
